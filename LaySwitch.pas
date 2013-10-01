@@ -1,8 +1,8 @@
-UNIT LaySwitch;
+unit LaySwitch;
 
-INTERFACE
+interface
 
-USES
+uses
   Windows,
   Messages,
   SysUtils,
@@ -15,17 +15,16 @@ USES
   typinfo;
 
 Const
+  BELARUSSIAN = LANG_BELARUSIAN;
+  RUS = LANG_RUSSIAN;
+  ENG = LANG_ENGLISH;
+  BLR = LANG_BELARUSIAN;
 
-  BELARUSSIAN=LANG_BELARUSIAN;
-  RUS=LANG_RUSSIAN;
-  ENG=LANG_ENGLISH;
-  BLR=LANG_BELARUSIAN;
-
-TYPE
+type
   TOnLayoutChange = procedure(Sender:tobject;Lang:string) of object;
-   TLanguageKeyBord = (NONE, ENGLISH, RUSSIAN, BELARUSIAN);
+  TLanguageKeyBord = (NONE, ENGLISH, RUSSIAN, BELARUSIAN);
 
-  TEvent=class
+  TEvent = class
     private
      FNotifyEvent:TNotifyEvent;
     public
@@ -37,14 +36,13 @@ TYPE
    public
      function AddObject(const S: string; const ANotifyEvent: TNotifyEvent): Integer; reintroduce;virtual;
      procedure Delete(Index: Integer);override;
-
  end;
 
  TOnExitList = TOnEnterList;
 
 
   TLayoutSwitcher = Class(TComponent)
-   Private
+   private
     FCompsList      : TStringList;
     FOnEnterList    : TOnEnterList;
     FOnExitList     : TOnExitList;
@@ -60,39 +58,39 @@ TYPE
     class var HLANG_RUSSIAN :HKL;
     class var HLANG_BELARUSIAN :HKL;
     class var LangDefault:integer;
-   Protected
+   protected
     class Function GetKblLayoutName : String;
-    Procedure SetSwitch(Sender: TWinControl; Lang : integer);
-    Procedure SetRussianLayout(Sender:Tobject);
-    Procedure SetBelaRusianLayout(Sender:Tobject);
-    Procedure SetEnglishLayout(Sender:Tobject);
-    Procedure RestoreLayout(Sender:Tobject);
+    procedure SetSwitch(Sender: TWinControl; Lang : integer);
+    procedure SetRussianLayout(Sender:Tobject);
+    procedure SetBelaRusianLayout(Sender:Tobject);
+    procedure SetEnglishLayout(Sender:Tobject);
+    procedure RestoreLayout(Sender:Tobject);
     class Function PrimaryLangId(Lang : Integer) : Integer;
     Function SubLangId(Lang : Integer) : Integer;
     class Function GetLangId : Integer;
     class Function MakeLangId(PLang, SLang : Integer) : String;
-    Procedure DoOldOnEnter(Sender:TObject);
-    Procedure DoOldOnExit(Sender:TObject);
-    class Procedure OnApplicationDeactivate(Sender:TObject);
-    class Procedure OnApplicationActivate(Sender:TObject);
-  Public
+    procedure DoOldOnEnter(Sender:TObject);
+    procedure DoOldOnExit(Sender:TObject);
+    class procedure OnApplicationDeactivate(Sender:TObject);
+    class procedure OnApplicationActivate(Sender:TObject);
+  public
     Constructor Create(AOwner : TComponent); override;
     Destructor Destroy; override;
-    Procedure Add(Accessor : TWinControl; Lang : integer); overload;
-    Procedure Add(Accessor : TWinControl; Lang : TLanguageKeyBord); overload;
-    Procedure Remove(Accessor : TWinControl);
-    class Procedure SwitchToRussian;
-    class Procedure SwitchToBelarusian;
-    class Procedure SwitchToEnglish;
+    procedure Add(Accessor : TWinControl; Lang : integer); overload;
+    procedure Add(Accessor : TWinControl; Lang : TLanguageKeyBord); overload;
+    procedure Remove(Accessor : TWinControl);
+    class procedure SwitchToRussian;
+    class procedure SwitchToBelarusian;
+    class procedure SwitchToEnglish;
     function GetActiveLang:string;
-  Published
+  published
     Property RestoreLayoutOnExit:boolean read FRestoreLayoutOnExit write FRestoreLayoutOnExit;
     property OnLayoutChange: TOnLayoutChange read FOnLayoutChange write FOnLayoutChange;
-  End;
+  end;
 
   function isList(AList:array of HKL;Lang:HKL):boolean;
 
-IMPLEMENTATION
+implementation
 
 var
     AList : array[0..254] of Hkl;
@@ -102,7 +100,7 @@ const
 
 function HexToInt(HexNum: string): LongInt;
 begin
-   Result:=StrToInt('$' + HexNum) ;
+   Result := StrToInt('$' + HexNum);
 end;
 
 function MakeLangId(PLang, SLang: byte): string;
@@ -134,34 +132,32 @@ begin
   RUSSIAN: Add(Accessor, LANG_RUSSIAN);
   BELARUSIAN: Add(Accessor, LANG_BELARUSIAN);
   else
-     Begin
+     begin
       Raise Exception.Create('Не определен язык!');
-     End;
+     end;
  end;
 end;
 
 Constructor TLayoutSwitcher.Create(AOwner : TComponent);
-Begin
+begin
  inherited Create(Aowner);
- FCompsList:=TStringList.Create;
- FCompsList.Sorted:=true;
- FCompsList.Duplicates:=dupError;
- FOnEnterList:=TOnEnterList.create;
- FOnEnterList.Sorted:=true;
- FOnEnterList.Duplicates:=dupError;
- FOnExitList:=TOnExitList.create;
- FOnExitList.Sorted:=true;
- FOnExitList.Duplicates:=dupError;
- FStateOn:=False;
- FExtKey:=False;
-End;
-{______________________________________________________________________________________________________________________}
+ FCompsList := TStringList.Create;
+ FCompsList.Sorted := true;
+ FCompsList.Duplicates := dupError;
+ FOnEnterList := TOnEnterList.create;
+ FOnEnterList.Sorted := true;
+ FOnEnterList.Duplicates := dupError;
+ FOnExitList := TOnExitList.create;
+ FOnExitList.Sorted := true;
+ FOnExitList.Duplicates := dupError;
+ FStateOn := False;
+ FExtKey := False;
+end;
 
 class Function TLayoutSwitcher.MakeLangId(PLang, SLang : Integer) : String;
-Begin
- MakeLangId:=IntToHex(((SLang Shl 10) OR PLang), 8);
-End;
-{______________________________________________________________________________________________________________________}
+begin
+ MakeLangId := IntToHex(((SLang Shl 10) OR PLang), 8);
+end;
 
 class procedure TLayoutSwitcher.OnApplicationActivate(Sender: TObject);
 begin
@@ -174,7 +170,6 @@ begin
     OldOnActivate(Sender);
 end;
 
-{______________________________________________________________________________________________________________________}
 
 class procedure TLayoutSwitcher.OnApplicationDeactivate(Sender: TObject);
 begin
@@ -185,20 +180,20 @@ begin
    ENG: SwitchToEnglish;
   end;
  if not isList(AList,HLANG_ENGLISH) then
-  Begin
-   HLANG_ENGLISH:=0;
+  begin
+   HLANG_ENGLISH := 0;
    UnloadKeyboardLayout(HLANG_ENGLISH);
-  End;
+  end;
  if not isList(AList,HLANG_RUSSIAN) then
-  Begin
+  begin
    UnloadKeyboardLayout(HLANG_RUSSIAN);
-   HLANG_RUSSIAN:=0;
-  End;
+   HLANG_RUSSIAN := 0;
+  end;
  if not isList(AList,HLANG_BELARUSIAN) then
-  Begin
+  begin
    UnloadKeyboardLayout(HLANG_BELARUSIAN);
-   HLANG_BELARUSIAN:=0;
-  End;
+   HLANG_BELARUSIAN := 0;
+  end;
  if Assigned(OldOnDeactivate) then
     OldOnDeactivate(Sender);
 end;
@@ -206,31 +201,31 @@ end;
 function TLayoutSwitcher.GetActiveLang:string;
 var
   id:integer;
-Begin
-  id:=getlangid;
+begin
+  id := getlangid;
   case id of
-    BLR: getactivelang:='BE';
-    RUS: getactivelang:='RU';
-    ENG: getactivelang:='EN';
+    BLR: getactivelang := 'BE';
+    RUS: getactivelang := 'RU';
+    ENG: getactivelang := 'EN';
   end;
 end;
 
 class Function TLayoutSwitcher.PrimaryLangId(Lang : Integer) : Integer;
-Begin
- PrimaryLangId:=Lang AND $3FF;
-End;
+begin
+ PrimaryLangId := Lang AND $3FF;
+end;
 
 Function TLayoutSwitcher.SubLangId(Lang : Integer) : Integer;
-Begin
- SubLangId:=Lang Shr 10;
-End;
+begin
+ SubLangId := Lang Shr 10;
+end;
 
 class Function TLayoutSwitcher.GetLangId : Integer;
-Begin
- GetLangId:=PrimaryLangId(HexToInt(GetKblLayoutName));
-End;
+begin
+ GetLangId := PrimaryLangId(HexToInt(GetKblLayoutName));
+end;
 
-Procedure TLayoutSwitcher.RestoreLayout;
+procedure TLayoutSwitcher.RestoreLayout;
 var
   lang: HKL;
 begin
@@ -244,137 +239,135 @@ begin
  DoOldOnExit(Sender);
 end;
 
-Procedure TLayoutSwitcher.SetRussianLayout(Sender:Tobject);
+procedure TLayoutSwitcher.SetRussianLayout(Sender:Tobject);
 begin
  SwitchToRussian;
  DoOldOnEnter(Sender);
  if Assigned(FOnLayoutChange) then
-   FOnLayoutChange(Self,'RU');
+   FOnLayoutChange(Self, 'RU');
 end;
 
-Procedure TLayoutSwitcher.SetBelaRusianLayout(Sender:Tobject);
+procedure TLayoutSwitcher.SetBelaRusianLayout(Sender:Tobject);
 begin
    SwitchToBelarusian;
    DoOldOnEnter(Sender);
 end;
 
-Procedure TLayoutSwitcher.SetEnglishLayout(Sender:Tobject);
+procedure TLayoutSwitcher.SetEnglishLayout(Sender:Tobject);
 begin
   SwitchToEnglish;
   DoOldOnEnter(Sender);
   if Assigned(FOnLayoutChange) then FOnLayoutChange(Self,'EN');
 end;
 
-{______________________________________________________________________________________________________________________}
 
 Destructor TLayoutSwitcher.Destroy;
-Begin
+begin
  fcompslist.free;
  fonenterlist.free;
  fonexitlist.free;
  inherited Destroy;
-End;
- {______________________________________________________________________________________________________________________}
+end;
 
-class Procedure TLayoutSwitcher.SwitchToRussian;
+class procedure TLayoutSwitcher.SwitchToRussian;
 begin
 if HLANG_RUSSIAN=0 then
- HLANG_RUSSIAN:=   LoadKeyboardLayout(pchar(makelangid(integer(LANG_RUSSIAN), sublang_default)),
+ HLANG_RUSSIAN :=    LoadKeyboardLayout(pchar(makelangid(integer(LANG_RUSSIAN), sublang_default)),
    KLF_SETFORPROCESS );
   ActivateKeyboardLayout(HLANG_RUSSIAN, KLF_SETFORPROCESS);
 end;
 
-class Procedure TLayoutSwitcher.SwitchToBelarusian;
+class procedure TLayoutSwitcher.SwitchToBelarusian;
 begin
  if HLANG_BELARUSIAN=0 then
-  HLANG_BELARUSIAN:= LoadKeyboardLayout(pchar(makelangid(integer(LANG_BELARUSIAN), sublang_default)),
+  HLANG_BELARUSIAN :=  LoadKeyboardLayout(pchar(makelangid(integer(LANG_BELARUSIAN), sublang_default)),
     KLF_SETFORPROCESS );
  ActivateKeyboardLayout(HLANG_BELARUSIAN, KLF_SETFORPROCESS);
 end;
 
-class Procedure TLayoutSwitcher.SwitchToEnglish;
+class procedure TLayoutSwitcher.SwitchToEnglish;
 begin
  if HLANG_ENGLISH=0 then
-  HLANG_ENGLISH:= LoadKeyboardLayout(pchar(makelangid(integer(LANG_ENGLISH), sublang_default)),
+  HLANG_ENGLISH :=  LoadKeyboardLayout(pchar(makelangid(integer(LANG_ENGLISH), sublang_default)),
     KLF_SETFORPROCESS);
  ActivateKeyboardLayout(HLANG_ENGLISH, KLF_SETFORPROCESS);
 end;
 
 class Function TLayoutSwitcher.GetKblLayoutName : String;
 Var KLN : PChar;
-Begin
- KLN:=StrAlloc(KL_NAMELENGTH+1);
+begin
+ KLN := StrAlloc(KL_NAMELENGTH+1);
  GetKeyboardLayoutName(KLN);
- GetKblLayoutName:=StrPas(KLN);
+ GetKblLayoutName := StrPas(KLN);
  StrDispose(KLN);
-End;
+end;
 
-Procedure TLayoutSwitcher.SetSwitch(Sender: TWinControl; Lang : integer);
+procedure TLayoutSwitcher.SetSwitch(Sender: TWinControl; Lang : integer);
 Var
    a:integer;
    sender1:tcomponent;
-Begin
+begin
   Case Lang of
    lang_russian  :  begin
                        if (sender is tcustomform) or (sender is tcustompanel) then begin
-                         for a:=0 to sender.Componentcount-1 do begin
-                           sender1:=sender.components[a];
+                         for a := 0 to sender.Componentcount-1 do begin
+                           sender1 := sender.components[a];
                            if (getpropinfo(sender1,'OnEnter')<>nil) and (getpropinfo(sender1,'OnExit')<>nil) then begin
-                             TEdit(Sender1).OnEnter:=SetRussianLayout;
-                             if FRestoreLayoutOnExit then TEdit(Sender1).OnExit:=RestoreLayout;
+                             TEdit(Sender1).OnEnter := SetRussianLayout;
+                             if FRestoreLayoutOnExit then TEdit(Sender1).OnExit := RestoreLayout;
                            end;
                          end;
                        end
                        else if (getpropinfo(sender,'OnEnter')<>nil) and (getpropinfo(sender,'OnExit')<>nil) then begin
-                         TEdit(Sender).OnEnter:=setRussianLayout;
-                         if FRestoreLayoutOnExit then TEdit(Sender).OnExit:=RestoreLayout;
+                         TEdit(Sender).OnEnter := setRussianLayout;
+                         if FRestoreLayoutOnExit then TEdit(Sender).OnExit := RestoreLayout;
                        end;
                     end;
    lang_belarusian :  begin
                            if (sender is tcustomform) or (sender is tcustompanel) then begin
-                           for a:=0 to sender.ComponentCount-1 do begin
-                             sender1:=sender.components[a];
+                           for a := 0 to sender.ComponentCount-1 do begin
+                             sender1 := sender.components[a];
                              if (getpropinfo(sender1,'OnEnter')<>nil) and (getpropinfo(sender1,'OnExit')<>nil) then begin
-                               TEdit(Sender1).OnEnter:=setBelarusianLayout;
-                               if FRestoreLayoutOnExit then TEdit(Sender1).OnExit:=RestoreLayout;
+                               TEdit(Sender1).OnEnter := setBelarusianLayout;
+                               if FRestoreLayoutOnExit then TEdit(Sender1).OnExit := RestoreLayout;
                              end;
                            end;
                          end
                          else if (getpropinfo(sender,'OnEnter')<>nil) and (getpropinfo(sender,'OnExit')<>nil) then begin
-                           TEdit(Sender).OnEnter:=setBelarusianLayout;
-                           if FRestoreLayoutOnExit then TEdit(Sender).OnExit:=RestoreLayout;
+                           TEdit(Sender).OnEnter := setBelarusianLayout;
+                           if FRestoreLayoutOnExit then TEdit(Sender).OnExit := RestoreLayout;
                          end;
                       end;
 
    lang_English :  begin
                        if (sender is tcustomform) or (sender is tcustompanel) then begin
-                       for a:=0 to sender.ComponentCount-1 do begin
-                         sender1:=sender.components[a];
+                       for a := 0 to sender.ComponentCount-1 do begin
+                         sender1 := sender.components[a];
                          if (getpropinfo(sender1,'OnEnter')<>nil) and (getpropinfo(sender1,'OnExit')<>nil) then begin
-                           TEdit(Sender1).OnEnter:=setEnglishLayout;
-                           if FRestoreLayoutOnExit then TEdit(Sender1).OnExit:=RestoreLayout;
+                           TEdit(Sender1).OnEnter := setEnglishLayout;
+                           if FRestoreLayoutOnExit then TEdit(Sender1).OnExit := RestoreLayout;
                          end;
                        end;
                      end
                      else if (getpropinfo(sender,'OnEnter')<>nil) and (getpropinfo(sender,'OnExit')<>nil) then begin
-                       TEdit(Sender).OnEnter:=setEnglishLayout;
-                       if FRestoreLayoutOnExit then TEdit(Sender).OnExit:=RestoreLayout;
+                       TEdit(Sender).OnEnter := setEnglishLayout;
+                       if FRestoreLayoutOnExit then TEdit(Sender).OnExit := RestoreLayout;
                      end;
                    end;
-  End;
-End;
+  end;
+end;
 
-Procedure TLayoutSwitcher.Add(Accessor : TWinControl; Lang : integer);
+procedure TLayoutSwitcher.Add(Accessor : TWinControl; Lang : integer);
 Var EdTmp : TEdit;
     index : integer;
-Begin
+begin
   if (lang<>lang_russian) and (lang<>lang_english) and (lang<>lang_belarusian) then begin
     messagedlg('Неизвестный язык для '+accessor.name+'! ('+inttostr(lang)+')',mterror,[mbok],0);
     exit;
   end;
  if FCompsList.Find(accessor.name, index) then exit;
 
-  EdTmp:=TEdit(accessor);
+  EdTmp := TEdit(accessor);
   FCompsList.add(accessor.name);
   if assigned(edtmp.OnEnter) then
     FOnEnterList.AddObject(accessor.name,edtmp.OnEnter);
@@ -382,45 +375,45 @@ Begin
   if assigned(edtmp.OnExit) then
     FOnExitList.AddObject(accessor.name,edtmp.OnExit);
   SetSwitch(Accessor, Lang);
-End;
+end;
 
-Procedure TLayoutSwitcher.Remove(Accessor : TWinControl);
+procedure TLayoutSwitcher.Remove(Accessor : TWinControl);
 Var
   EdTmp : TEdit;
   ind:integer;
-Begin
- EdTmp:=TEdit(Accessor);
+begin
+ EdTmp := TEdit(Accessor);
  if FCompsList.Find(EdTmp.Name,ind) then
   begin
-   EdTmp.OnEnter:=nil;
+   EdTmp.OnEnter := nil;
    FCompsList.Delete(ind);
   end;
  if FonenterList.Find(EdTmp.Name,ind) then
    FonenterList.Delete(ind);
  if FonexitList.Find(EdTmp.Name,ind) then
    FonexitList.Delete(ind);
-End;
+end;
 
-Procedure TLayoutSwitcher.DoOldOnEnter(sender : TObject);
+procedure TLayoutSwitcher.DoOldOnEnter(sender : TObject);
 Var
   oldonenter : TNotifyEvent;
   index:integer;
-Begin
+begin
  if FonenterList.Find(TWinControl(Sender).Name,index) then
   begin
-  oldonenter:=(FonenterList.Objects[index] as TEvent).NotifyEvent;
+  oldonenter := (FonenterList.Objects[index] as TEvent).NotifyEvent;
   if Assigned(oldonenter) then oldonenter(Sender);
   end;
 end;
 
-Procedure TLayoutSwitcher.DoOldOnExit(sender : TObject);
+procedure TLayoutSwitcher.DoOldOnExit(sender : TObject);
 Var
   oldonexit : TNotifyEvent;
     index:integer;
-Begin
+begin
  if FonexitList.Find(TWinControl(Sender).Name,index) then
   begin
-   oldonexit:=(FonexitList.Objects[Index] as TEvent).NotifyEvent;;
+   oldonexit := (FonexitList.Objects[Index] as TEvent).NotifyEvent;;
    if Assigned(oldonexit) then oldonexit(Sender);
   end;
 end;
@@ -438,15 +431,15 @@ end;
 initialization
   TLayoutSwitcher.LangDefault := TLayoutSwitcher.GetLangId ;
   GetKeyboardLayoutList(255, AList);
-  TLayoutSwitcher.HLANG_RUSSIAN:=0;
-  TLayoutSwitcher.HLANG_BELARUSIAN:=0;
-  TLayoutSwitcher.HLANG_ENGLISH:= 0;
+  TLayoutSwitcher.HLANG_RUSSIAN := 0;
+  TLayoutSwitcher.HLANG_BELARUSIAN := 0;
+  TLayoutSwitcher.HLANG_ENGLISH :=  0;
 
-  TLayoutSwitcher.OldOnActivate:=Application.OnActivate;
-  TLayoutSwitcher.OldOnDeactivate:=Application.OnDeactivate;
+  TLayoutSwitcher.OldOnActivate := Application.OnActivate;
+  TLayoutSwitcher.OldOnDeactivate := Application.OnDeactivate;
 
-  Application.OnDeactivate:=TLayoutSwitcher.OnApplicationDeactivate;
-  Application.OnActivate:= TLayoutSwitcher.OnApplicationActivate;
+  Application.OnDeactivate := TLayoutSwitcher.OnApplicationDeactivate;
+  Application.OnActivate :=  TLayoutSwitcher.OnApplicationActivate;
 
 
 finalization
@@ -459,7 +452,6 @@ finalization
  if not isList(AList,TLayoutSwitcher.HLANG_BELARUSIAN) then
   UnloadKeyboardLayout(TLayoutSwitcher.HLANG_BELARUSIAN);
 
-Application.OnActivate:=TLayoutSwitcher.OldOnActivate;
-Application.OnDeactivate:=TLayoutSwitcher.OldOnDeactivate;
-
-END.
+Application.OnActivate := TLayoutSwitcher.OldOnActivate;
+Application.OnDeactivate := TLayoutSwitcher.OldOnDeactivate;
+end.
