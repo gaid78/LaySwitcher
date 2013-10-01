@@ -274,13 +274,9 @@ end;
 Destructor TLayoutSwitcher.Destroy;
 
  Begin
- //strdispose(lastlayout);
  fcompslist.free;
  fonenterlist.free;
  fonexitlist.free;
-
-// Application.OnActivate:=OldOnActivate;
-// Application.OnDeactivate:=OldOnDeactivate;
 
  inherited Destroy;
  End;
@@ -402,7 +398,7 @@ Procedure TLayoutSwitcher.Add(Accessor : TWinControl; Lang : integer);
  Begin
 //  if (csdesigning in componentstate) then exit;
   if (lang<>lang_russian) and (lang<>lang_english) and (lang<>lang_belarusian) then begin
-    messagedlg('Неизвестный язык для '+accessor.name+'! ('+inttostr(lang)+')',mterror,[mbok],0);
+    messagedlg('пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ '+accessor.name+'! ('+inttostr(lang)+')',mterror,[mbok],0);
     exit;
   end;
  if FCompsList.Find(accessor.name, index) then exit;
@@ -411,7 +407,7 @@ Procedure TLayoutSwitcher.Add(Accessor : TWinControl; Lang : integer);
   FCompsList.add(accessor.name);
 //  if assigned(edtmp.OnEnter) then
 //   edtmp.OnEnter(Accessor);
-   //Чтоб 2 раза не добавлять один и тотже компонент ошибки!!!!
+   //пїЅпїЅпїЅпїЅ 2 пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!!!!
   if assigned(edtmp.OnEnter) then
    Begin
     FOnEnterList.AddObject(accessor.name,edtmp.OnEnter);
@@ -419,11 +415,7 @@ Procedure TLayoutSwitcher.Add(Accessor : TWinControl; Lang : integer);
    End;
 
   if assigned(edtmp.OnExit) then
-   Begin
-
     FOnExitList.AddObject(accessor.name,edtmp.OnExit);
-
-   End;
 
   SetSwitch(Accessor, Lang);
  End;
@@ -443,17 +435,11 @@ Procedure TLayoutSwitcher.Remove(Accessor : TWinControl);
     FCompsList.Delete(ind);
    end;
 
-   //FonenterList.f
-
   if FonenterList.Find(EdTmp.Name,ind) then
-   begin
     FonenterList.Delete(ind);
-   end;
 
   if FonexitList.Find(EdTmp.Name,ind) then
-   begin
     FonexitList.Delete(ind);
-   end;
  End;
 {______________________________________________________________________________________________________________________}
 
@@ -486,23 +472,16 @@ function isList(AList:array of HKL;Lang:HKL):boolean;
 var
  I:integer;
 begin
-  result  := false;
+result  := false;
 for I := 0 to Length(AList)-1 do
-begin
  if AList[i]=Lang then
- begin
    result := true;
- end;
-end;
 end;
 
 initialization
- // setLength(AList,255);
-//  TLayoutSwitcher.lastlayout:=stralloc(20);
   TLayoutSwitcher.LangDefault := TLayoutSwitcher.GetLangId ;
-//adm
   GetKeyboardLayoutList(255, AList);
-  //setLength(AList,5);
+
   TLayoutSwitcher.HLANG_RUSSIAN:=0;
   TLayoutSwitcher.HLANG_BELARUSIAN:=0;
   TLayoutSwitcher.HLANG_ENGLISH:= 0;
