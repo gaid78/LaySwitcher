@@ -46,11 +46,8 @@ type
     FCompsList      : TStringList;
     FOnEnterList    : TOnEnterList;
     FOnExitList     : TOnExitList;
-    FExtKey         : Boolean;
-    FStateOn        : Boolean;
     FOnLayoutChange : TOnLayoutChange;
     FRestoreLayoutOnExit:boolean;
-    //class var lastlayout      : Pchar;
     class var CurentLanguage:Hkl;
     class var OldOnActivate:TNotifyEvent;
     class var OldOnDeactivate:TNotifyEvent;
@@ -150,8 +147,6 @@ begin
  FOnExitList := TOnExitList.create;
  FOnExitList.Sorted := true;
  FOnExitList.Duplicates := dupError;
- FStateOn := False;
- FExtKey := False;
 end;
 
 class Function TLayoutSwitcher.MakeLangId(PLang, SLang : Integer) : String;
@@ -229,14 +224,14 @@ procedure TLayoutSwitcher.RestoreLayout;
 var
   lang: HKL;
 begin
-  lang := HLANG_ENGLISH;
   case getlangid of
     ENG: lang := HLANG_ENGLISH;
     RUS: lang := HLANG_RUSSIAN;
     BLR: lang := HLANG_BELARUSIAN;
+    else lang := HLANG_ENGLISH;
   end;
- ActivateKeyboardLayout(lang, KLF_SETFORPROCESS);
- DoOldOnExit(Sender);
+  ActivateKeyboardLayout(lang, KLF_SETFORPROCESS);
+  DoOldOnExit(Sender);
 end;
 
 procedure TLayoutSwitcher.SetRussianLayout(Sender:Tobject);
