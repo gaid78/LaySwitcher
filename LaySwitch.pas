@@ -96,7 +96,7 @@ const
   KLF_SETFORPROCESS = $100;
 
 resourcestring
-  Err_Unique = 'Компенент с именем %S находится в списке.';
+  Err_Unique = 'Компонент с именем %S находится в списке.';
 {
   Err_Unique = 'The component with the name %S is in the list.';
 }
