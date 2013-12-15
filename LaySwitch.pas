@@ -97,6 +97,9 @@ const
 
 resourcestring
   Err_Unique = 'Компенент с именем %S находится в списке.';
+{
+  Err_Unique = 'The component with the name %S is in the list.';
+}
 
 function HexToInt(HexNum: string): LongInt;
 begin
